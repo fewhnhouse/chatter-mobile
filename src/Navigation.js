@@ -49,7 +49,10 @@ const MainScreenNavigator = TabNavigator(
 const AppNavigator = StackNavigator(
   {
     Main: { screen: MainScreenNavigator },
-    Messages: { screen: Messages }
+    Messages: { screen: Messages },
+    GroupDetails: { screen: {} },
+    NewGroup: { screen: {} },
+    FinalizeGroup: { screen: {} }
   },
   {
     mode: "card"

@@ -1,9 +1,17 @@
 import { _ } from "lodash";
-import { FlatList, ActivityIndicator, StyleSheet, View } from "react-native";
+import {
+  FlatList,
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  StyleSheet,
+  View
+} from "react-native";
 import PropTypes from "prop-types";
 import React, { Component } from "react";
 import randomColor from "randomcolor";
 import Message from "./components/Message";
+import MessageInput from "./components/MessageInput";
+
 import { graphql, compose } from "react-apollo";
 import GROUP_QUERY from "../graphql/group.query";
 
@@ -18,21 +26,7 @@ const styles = StyleSheet.create({
     justifyContent: "center"
   }
 });
-const fakeData = () =>
-  _.times(100, i => ({
-    // every message will have a different color
-    color: randomColor(),
-    // every 5th message will look like it's from the current user
-    isCurrentUser: i % 5 === 0,
-    message: {
-      id: i,
-      createdAt: new Date().toISOString(),
-      from: {
-        username: `Username ${i}`
-      },
-      text: `Message ${i}`
-    }
-  }));
+
 class Messages extends Component {
   static navigationOptions = ({ navigation }) => {
     const { state } = navigation;
@@ -52,6 +46,7 @@ class Messages extends Component {
       usernameColors
     };
     this.renderItem = this.renderItem.bind(this);
+    this.send = this.send.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -71,7 +66,13 @@ class Messages extends Component {
     }
   }
 
+  send(text) {
+    // TODO: send the message
+    console.log(`sending message: ${text}`);
+  }
+
   keyExtractor = item => item.id.toString();
+
   renderItem = ({ item: message }) => (
     <Message
       color={this.state.usernameColors[message.from.username]}
@@ -92,12 +93,20 @@ class Messages extends Component {
     // render list of messages for group
     return (
       <View style={styles.container}>
-        <FlatList
-          data={group.messages.slice().reverse()}
-          keyExtractor={this.keyExtractor}
-          renderItem={this.renderItem}
-          ListEmptyComponent={<View />}
-        />
+        <KeyboardAvoidingView
+          behavior={"position"}
+          contentContainerStyle={styles.container}
+          keyboardVerticalOffset={64}
+          style={styles.container}
+        >
+          <FlatList
+            data={group.messages.slice().reverse()}
+            keyExtractor={this.keyExtractor}
+            renderItem={this.renderItem}
+            ListEmptyComponent={<View />}
+          />
+          <MessageInput send={this.send} />
+        </KeyboardAvoidingView>
       </View>
     );
   }

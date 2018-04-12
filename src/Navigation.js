@@ -52,7 +52,7 @@ const AppNavigator = StackNavigator(
     Messages: { screen: Messages }
   },
   {
-    mode: "modal"
+    mode: "card"
   }
 );
 // reducer initialization code

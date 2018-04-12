@@ -4,6 +4,9 @@ import {
   ActivityIndicator,
   KeyboardAvoidingView,
   StyleSheet,
+  TouchableOpacity,
+  Image,
+  Text,
   View
 } from "react-native";
 import PropTypes from "prop-types";
@@ -25,14 +28,47 @@ const styles = StyleSheet.create({
   },
   loading: {
     justifyContent: "center"
+  },
+  titleWrapper: {
+    alignItems: "center",
+    position: "absolute",
+    left: 0,
+    right: 0
+  },
+  title: {
+    flexDirection: "row",
+    alignItems: "center"
+  },
+  titleImage: {
+    marginRight: 6,
+    width: 32,
+    height: 32,
+    borderRadius: 16
   }
 });
 
 class Messages extends Component {
   static navigationOptions = ({ navigation }) => {
-    const { state } = navigation;
-    return {
+    const { state, navigate } = navigation;
+    const goToGroupDetails = navigate.bind(this, "GroupDetails", {
+      id: state.params.groupId,
       title: state.params.title
+    });
+    return {
+      headerTitle: (
+        <TouchableOpacity
+          style={styles.titleWrapper}
+          onPress={goToGroupDetails}
+        >
+          <View style={styles.title}>
+            <Image
+              style={styles.titleImage}
+              source={{ uri: "https://reactjs.org/logo-og.png" }}
+            />
+            <Text>{state.params.title}</Text>
+          </View>
+        </TouchableOpacity>
+      )
     };
   };
   constructor(props) {
@@ -127,6 +163,7 @@ class Messages extends Component {
 Messages.propTypes = {
   createMessage: PropTypes.func,
   navigation: PropTypes.shape({
+    navigate: PropTypes.func,
     state: PropTypes.shape({
       params: PropTypes.shape({
         groupId: PropTypes.number

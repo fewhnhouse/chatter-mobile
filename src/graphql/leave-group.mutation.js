@@ -1,10 +1,11 @@
 import gql from "graphql-tag";
-const CREATE_GROUP_MUTATION = gql`
-  mutation createGroup($id: Int!, $userId: Int!) {
-    createGroup(id: $id, userId: $userId) {
+
+const LEAVE_GROUP_MUTATION = gql`
+  mutation leaveGroup($id: Int!, $userId: Int!) {
+    leaveGroup(id: $id, userId: $userId) {
       id
-      name
     }
   }
 `;
-export default CREATE_GROUP_MUTATION;
+
+export default LEAVE_GROUP_MUTATION;

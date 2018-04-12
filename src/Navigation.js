@@ -14,6 +14,9 @@ import { Text, View, StyleSheet } from "react-native";
 import { connect } from "react-redux";
 import Groups from "./screens/Groups";
 import Messages from "./screens/Messages";
+import NewGroup from './screens/NewGroup';
+import FinalizeGroup from './screens/FinalizeGroup';
+import GroupDetails from './screens/GroupDetails';
 
 const styles = StyleSheet.create({
   container: {
@@ -47,12 +50,12 @@ const MainScreenNavigator = TabNavigator(
   }
 );
 const AppNavigator = StackNavigator(
-  {
+  { 
     Main: { screen: MainScreenNavigator },
     Messages: { screen: Messages },
-    GroupDetails: { screen: {} },
-    NewGroup: { screen: {} },
-    FinalizeGroup: { screen: {} }
+    GroupDetails: { screen: GroupDetails },
+    NewGroup: { screen: NewGroup },
+    FinalizeGroup: { screen: FinalizeGroup }
   },
   {
     mode: "card"

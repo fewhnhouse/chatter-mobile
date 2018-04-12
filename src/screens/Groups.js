@@ -1,7 +1,19 @@
 import { _ } from "lodash";
 import PropTypes from "prop-types";
 import React, { Component } from "react";
-import { FlatList, ActivityIndicator, StyleSheet, View } from "react-native";
+import {
+  FlatList,
+  TouchableOpacity,
+  TouchableHighlight,
+  ActivityIndicator,
+  StyleSheet,
+  View,
+  Button,
+  Text,
+  Modal
+} from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
+import NewGroup from "./NewGroup";
 import Group from "./components/Group";
 import { graphql, compose } from "react-apollo";
 import { USER_QUERY } from "../graphql/user.query";
@@ -14,15 +26,37 @@ const styles = StyleSheet.create({
   loading: {
     justifyContent: "center",
     flex: 1
+  },
+  newGroupPanel: {
+    backgroundColor: "white",
+    height: 30,
+    borderBottomWidth: 1,
+    borderColor: "#eee",
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-end"
+  },
+  header: {
+    alignItems: "flex-end",
+    padding: 6,
+    borderColor: "#eee",
+    borderBottomWidth: 1
+  },
+  warning: {
+    textAlign: "center",
+    padding: 12
   }
 });
-// create fake data to populate our ListView
-const fakeData = () =>
-  _.times(100, i => ({
-    id: i,
-    name: `Group ${i}`
-  }));
+const Header = ({ onPress }) => (
+  <View style={styles.header}>
+    <Button title={"New Group"} onPress={onPress} />
+  </View>
+);
 
+Header.propTypes = {
+  onPress: PropTypes.func.isRequired
+};
 class Groups extends Component {
   static navigationOptions = {
     title: "Chats"
@@ -30,11 +64,21 @@ class Groups extends Component {
   constructor(props) {
     super(props);
     this.goToMessages = this.goToMessages.bind(this);
+    this.goToNewGroup = this.goToNewGroup.bind(this);
+    this.toggleModalVisible = this.toggleModalVisible.bind(this);
+    this.state = {
+      modalVisible: false
+    };
   }
 
   goToMessages(group) {
     const { navigate } = this.props.navigation;
     navigate("Messages", { groupId: group.id, title: group.name });
+  }
+
+  goToNewGroup() {
+    const { navigate } = this.props.navigation;
+    navigate("NewGroup");
   }
 
   keyExtractor = item => item.id.toString();
@@ -43,10 +87,17 @@ class Groups extends Component {
     <Group group={item} goToMessages={this.goToMessages} />
   );
 
+  toggleModalVisible() {
+    this.setState(prevState => {
+      return { modalVisible: !prevState.modalVisible };
+    });
+  }
+
   render() {
     const { loading, user } = this.props;
-    console.log(loading, user);
+
     // render loading placeholder while we fetch messages
+
     if (loading) {
       return (
         <View style={[styles.loading, styles.container]}>
@@ -54,13 +105,26 @@ class Groups extends Component {
         </View>
       );
     }
+
+    if (user && !user.groups.length) {
+      return (
+        <View style={styles.container}>
+          <Header onPress={this.goToNewGroup} />
+
+          <Text style={styles.warning}>{"You do not have any groups."}</Text>
+        </View>
+      );
+    }
+
     // render list of groups for user
+
     return (
       <View style={styles.container}>
         <FlatList
           data={user.groups}
           keyExtractor={this.keyExtractor}
           renderItem={this.renderItem}
+          ListHeaderComponent={() => <Header onPress={this.goToNewGroup} />}
         />
       </View>
     );

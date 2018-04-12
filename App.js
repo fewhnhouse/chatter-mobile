@@ -16,7 +16,7 @@ import AppWithNavigationState, {
   navigationMiddleware
 } from "./src/Navigation";
 
-const URL = "http://localhost:8080"; // set your comp's url here
+const URL = "fewhnhouse.de:7070"; // set your comp's url here
 const store = createStore(
   combineReducers({
     apollo: apolloReducer,

@@ -58,7 +58,7 @@ class Groups extends Component {
     return (
       <View style={styles.container}>
         <FlatList
-          data={fakeData()}
+          data={user.groups}
           keyExtractor={this.keyExtractor}
           renderItem={this.renderItem}
         />

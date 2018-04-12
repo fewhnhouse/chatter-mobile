@@ -1,24 +1,29 @@
 import React, { Component } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import Root from "./src/Root";
 import { ApolloClient } from "apollo-client";
 import { ApolloLink } from "apollo-link";
 import { ApolloProvider } from "react-apollo";
 import { composeWithDevTools } from "redux-devtools-extension";
 import { createHttpLink } from "apollo-link-http";
-import { createStore, combineReducers } from "redux";
+import { createStore, combineReducers, applyMiddleware } from "redux";
 import { Provider } from "react-redux";
 import { ReduxCache, apolloReducer } from "apollo-cache-redux";
 import ReduxLink from "apollo-link-redux";
 import { onError } from "apollo-link-error";
 
-const URL = "localhost:8080"; // set your comp's url here
+import AppWithNavigationState, {
+  navigationReducer,
+  navigationMiddleware
+} from "./src/Navigation";
+
+const URL = "http://localhost:8080"; // set your comp's url here
 const store = createStore(
   combineReducers({
-    apollo: apolloReducer
+    apollo: apolloReducer,
+    nav: navigationReducer
   }),
   {}, // initial state
-  composeWithDevTools()
+  composeWithDevTools(applyMiddleware(navigationMiddleware))
 );
 const cache = new ReduxCache({ store });
 const reduxLink = new ReduxLink(store);
@@ -37,10 +42,9 @@ export default class App extends Component {
     return (
       <ApolloProvider client={client}>
         <Provider store={store}>
-            <Root />
+          <AppWithNavigationState />
         </Provider>
       </ApolloProvider>
     );
   }
 }
-

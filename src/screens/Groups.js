@@ -10,7 +10,8 @@ import {
   View,
   Button,
   Text,
-  Modal
+  Modal,
+  Image
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import NewGroup from "./NewGroup";
@@ -65,10 +66,11 @@ class Groups extends Component {
     super(props);
     this.goToMessages = this.goToMessages.bind(this);
     this.goToNewGroup = this.goToNewGroup.bind(this);
-    this.toggleModalVisible = this.toggleModalVisible.bind(this);
-    this.state = {
-      modalVisible: false
-    };
+    this.onRefresh = this.onRefresh.bind(this);
+  }
+
+  onRefresh() {
+    this.props.refetch();
   }
 
   goToMessages(group) {
@@ -87,15 +89,8 @@ class Groups extends Component {
     <Group group={item} goToMessages={this.goToMessages} />
   );
 
-  toggleModalVisible() {
-    this.setState(prevState => {
-      return { modalVisible: !prevState.modalVisible };
-    });
-  }
-
   render() {
-    const { loading, user } = this.props;
-
+    const { loading, user, networkStatus } = this.props;
     // render loading placeholder while we fetch messages
 
     if (loading) {
@@ -125,6 +120,8 @@ class Groups extends Component {
           keyExtractor={this.keyExtractor}
           renderItem={this.renderItem}
           ListHeaderComponent={() => <Header onPress={this.goToNewGroup} />}
+          onRefresh={this.onRefresh}
+          refreshing={networkStatus === 4}
         />
       </View>
     );
@@ -136,6 +133,8 @@ Groups.propTypes = {
     navigate: PropTypes.func
   }),
   loading: PropTypes.bool,
+  networkStatus: PropTypes.number,
+  refetch: PropTypes.func,
   user: PropTypes.shape({
     id: PropTypes.number.isRequired,
     email: PropTypes.string.isRequired,
@@ -152,8 +151,10 @@ Groups.propTypes = {
 // set the id variable for USER_QUERY using the component's existing props
 const userQuery = graphql(USER_QUERY, {
   options: () => ({ variables: { id: 1 } }), // fake the user for now
-  props: ({ data: { loading, user } }) => ({
+  props: ({ data: { loading, networkStatus, refetch, user } }) => ({
     loading,
+    networkStatus,
+    refetch,
     user
   })
 });

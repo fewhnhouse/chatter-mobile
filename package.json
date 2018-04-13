@@ -8,6 +8,8 @@
     "apollo-link-error": "^1.0.7",
     "apollo-link-http": "^1.5.3",
     "apollo-link-redux": "^0.2.1",
+    "apollo-link-ws": "^1.0.8",
+    "apollo-utilities": "^1.0.11",
     "buffer": "^5.1.0",
     "expo": "^26.0.0",
     "graphql": "^0.13.2",
@@ -25,6 +27,7 @@
     "react-navigation-redux-helpers": "^1.0.5",
     "react-redux": "^5.0.7",
     "redux": "^3.7.2",
-    "redux-devtools-extension": "^2.13.2"
+    "redux-devtools-extension": "^2.13.2",
+    "subscriptions-transport-ws": "^0.9.7"
   }
 }
